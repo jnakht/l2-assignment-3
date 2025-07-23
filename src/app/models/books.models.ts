@@ -38,6 +38,7 @@ const BookSchema = new Schema<IBook>(
         type: String,
         enum : ['FICTION', 'NON_FICTION', 'SCIENCE', 'HISTORY', 'BIOGRAPHY', 'FANTASY'],
         required : [true, "Genre Is Required"],
+        uppercase: true,
     },
     isbn: {
         type: String,

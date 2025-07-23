@@ -1,15 +1,32 @@
 
 import express, { Request, Response } from "express";
 import Borrow from "../models/borrow.models";
+import z from 'zod'
 
 export const borrowsRoutes = express.Router();
 
-borrowsRoutes.post('/', async (req : Request, res : Response) => {
-    const body = req.body;
-    const borrow = await Borrow.create(body);
-    res.status(200).json({
-        "success": true,
-        "message": "Book borrowed successfully",
-        "data": borrow
-    })
+const createBorrowZodSchema = z.object({
+    book: z.string("Not A Valid UUID Of Mongodb").regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId"),
+    quantity: z.number("Quantity Must Be A Number").gt(0, "Quantity Must Be At Least 1"),
+    dueDate: z.iso.datetime("This Is Not A Valid Date")
+})
+
+borrowsRoutes.post('/', async (req: Request, res: Response) => {
+    // const body = req.body;
+    try {
+        const zodBody = await createBorrowZodSchema.parseAsync(req.body);
+        const borrow = await Borrow.create(zodBody);
+        res.status(200).json({
+            "success": true,
+            "message": "Book borrowed successfully",
+            "data": borrow
+        })
+    } catch (error: any) {
+        console.log(error);
+        res.status(400).json({
+            "message": error._message,
+            "success": false,
+            "error": error
+        })
+    }
 })
