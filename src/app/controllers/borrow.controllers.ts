@@ -41,3 +41,52 @@ borrowsRoutes.post('/', async (req: Request, res: Response) => {
         })
     }
 })
+
+
+// get borrow summary
+borrowsRoutes.get('/', async (req : Request, res : Response) => {
+    //aggregate pipeline
+    // const borrows = Borrow.aggregate([
+    //     //stage 1
+    //     {}
+    // ])
+    // const borrows = await Borrow.find().populate('book');
+
+
+    const borrows = await Borrow.aggregate([
+        //stage - 1
+        {  $lookup: {
+                  from: "books",
+                  localField: "book",
+                  foreignField: "_id",
+                  as: "bookData"
+        }},
+        { $group : {
+            _id : "$bookData",
+            totalQuantity: { $sum : 1 }
+        }},
+        { $project : {
+            _id : 0,
+            book: {
+                'title': {$first :"$_id.title"},
+                'isbn': {$first : "$_id.isbn"}
+            },
+            totalQuantity: 1
+        }}
+    ])
+
+
+
+
+    // { $group : {
+    //         _id : "$book", 
+    //         count : { $sum : 1 },
+    //         book : { $push : "$bookData"}
+    //     }}
+
+    res.status(200).json({
+        "success": true,
+        "message": "Borrowed books summary retrieved successfully",
+        "data": borrows
+    })
+})

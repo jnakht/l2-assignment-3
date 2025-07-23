@@ -9,6 +9,7 @@ const BorrowSchema = new Schema<IBorrow, Model<IBorrow>, IBorrowInstanceMethods>
     book: {
         type: Schema.Types.ObjectId,
         required: true,
+        ref: "Book",
         trim: true
     },
     quantity: {
