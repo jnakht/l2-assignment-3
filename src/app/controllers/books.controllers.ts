@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express"
 import Book from "../models/books.models";
+import { parse } from "zod";
 
 
 export const booksRoutes = express.Router();
@@ -13,6 +14,37 @@ booksRoutes.post('/create-book', async (req: Request, res: Response) => {
         "success": true,
         "message": "Book created successfully",
         "data": book 
+    })
+})
+
+// get all books, query books
+booksRoutes.get('/', async (req: Request, res: Response) => {
+   const filter = req.query.filter;
+   const sortBy = req.query.sortBy as string;
+   const sort = req.query.sort;
+   const limit = req.query.limit as string;
+
+   let query : any = {};
+   if (filter) {
+    query.genre = filter;
+   }
+
+   let booksQuery = Book.find(query);
+
+   const one = 1, minusOne = -1;
+   const sortOrder = sort === 'desc' ? minusOne : one;
+   if (sortBy && sort) {
+    booksQuery = booksQuery.sort({[sortBy] : sortOrder});
+   }
+   if (limit) {
+    booksQuery = booksQuery.limit(parseInt(limit));
+   }
+
+   const books = await booksQuery;
+    res.status(200).json({
+        "success": true,
+        "message": "Books retrieved successfully",
+        "data": books
     })
 })
 
