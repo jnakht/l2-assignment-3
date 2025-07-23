@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IAuthor, IBook } from "../interfaces/books.interface";
-
+import validator from 'validator'
 
 // const AuthorSchema = new Schema<IAuthor>({
 //     firstName : { 
@@ -25,7 +25,14 @@ const BookSchema = new Schema<IBook>(
     author: {
         type : String,
         required: [true, "Author Name Is Required"],
-        trim : true
+        trim : true,
+        validate: {
+            validator: function(v) {
+                return validator.isAlpha(v);
+            },
+            message: props => `Name Must Only Contain Alphabets. Got ${props.value}`
+        },
+        maxlength: [100, 'Max 100 Characters Are Allowed For Author Names. Got {VALUE}'] 
     },
     genre: {
         type: String,

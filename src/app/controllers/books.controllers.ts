@@ -1,57 +1,79 @@
 import express, { Request, Response } from "express"
 import Book from "../models/books.models";
-import { parse } from "zod";
+import z from "zod"
 
 
 export const booksRoutes = express.Router();
 
+
+//zod validation
+const createBookZodSchema = z.object({
+    title: z.string(),
+    author: z.string(),
+    genre: z.string(),
+    isbn: z.string(),
+    description: z.string().optional(),
+    copies: z.number(),
+    available: z.boolean()
+})
+
 //create a book route
 booksRoutes.post('/create-book', async (req: Request, res: Response) => {
-    const body = req.body;
-    console.log("Book BOdy", body);
-    const book = await Book.create(body);
-    res.status(200).json({
-        "success": true,
-        "message": "Book created successfully",
-        "data": book 
-    })
+    try {
+        const zodBody = await createBookZodSchema.parseAsync(req.body);
+        // console.log("Book BOdy", body);
+        console.log(zodBody, "zod body");
+        const book = await Book.create(zodBody);
+        res.status(200).json({
+            "success": true,
+            "message": "Book created successfully",
+            "data": book
+        })
+    } catch (error : any) {
+        console.log(error);
+        res.status(400).json({
+            "message": error._message,
+            "success": false,
+            "error": error
+        })
+    }
 })
 
 // get all books, query books
 booksRoutes.get('/', async (req: Request, res: Response) => {
-   const filter = req.query.filter;
-   const sortBy = req.query.sortBy as string;
-   const sort = req.query.sort;
-   const limit = req.query.limit as string;
+    const filter = req.query.filter;
+    const sortBy = req.query.sortBy as string;
+    const sort = req.query.sort;
+    const limit = req.query.limit as string;
 
-//    option 1 
-//    let query : any = {};
-//    if (filter) {
-//     query.genre = filter;
-//    }
+    //    option 1 
+    //    let query : any = {};
+    //    if (filter) {
+    //     query.genre = filter;
+    //    }
 
-//    let booksQuery = Book.find(query);
+    //    let booksQuery = Book.find(query);
 
-//    const one = 1, minusOne = -1;
-//    const sortOrder = sort === 'desc' ? minusOne : one;
-//    if (sortBy && sort) {
-//     booksQuery = booksQuery.sort({[sortBy] : sortOrder});
-//    }
-//    if (limit) {
-//     booksQuery = booksQuery.limit(parseInt(limit));
-//    }
-//    const books = await booksQuery;
+    //    const one = 1, minusOne = -1;
+    //    const sortOrder = sort === 'desc' ? minusOne : one;
+    //    if (sortBy && sort) {
+    //     booksQuery = booksQuery.sort({[sortBy] : sortOrder});
+    //    }
+    //    if (limit) {
+    //     booksQuery = booksQuery.limit(parseInt(limit));
+    //    }
+    //    const books = await booksQuery;
 
 
 
-            // option - 2
+    // option - 2
     const one = 1, minusOne = -1;
     const sortOrder = sort === 'desc' ? minusOne : one;
     const books = await Book.find(
-        filter ? {genre : filter} : {}
+        filter ? { genre: filter } : {}
     ).sort(
-        sortBy && sort ? 
-        {[sortBy] : sortOrder} : {}
+        sortBy && sort ?
+            { [sortBy]: sortOrder } : {}
     ).limit(limit ? parseInt(limit) : 0);
 
 
@@ -62,7 +84,7 @@ booksRoutes.get('/', async (req: Request, res: Response) => {
     })
 })
 // get a single book by id
-booksRoutes.get('/:bookId', async (req : Request, res : Response) => {
+booksRoutes.get('/:bookId', async (req: Request, res: Response) => {
     const id = req.params.bookId;
     const book = await Book.findById(id);
     res.status(200).json({
@@ -72,10 +94,10 @@ booksRoutes.get('/:bookId', async (req : Request, res : Response) => {
     })
 })
 // update a single book by id
-booksRoutes.patch('/:bookId', async (req : Request, res : Response) => {
+booksRoutes.patch('/:bookId', async (req: Request, res: Response) => {
     const id = req.params.bookId;
     const body = req.body;
-    const updatedBook = await Book.findByIdAndUpdate(id, body, { new : true });
+    const updatedBook = await Book.findByIdAndUpdate(id, body, { new: true });
     res.status(200).json({
         "success": true,
         "message": "Book updated successfully",
@@ -84,7 +106,7 @@ booksRoutes.patch('/:bookId', async (req : Request, res : Response) => {
 })
 
 // delete a single book by id
-booksRoutes.delete('/:bookId', async (req : Request, res : Response) => {
+booksRoutes.delete('/:bookId', async (req: Request, res: Response) => {
     const id = req.params.bookId;
     const deletedBook = await Book.findByIdAndDelete(id);
     res.status(200).json({
