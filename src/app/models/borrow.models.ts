@@ -3,7 +3,8 @@ import { Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
 
 
-const BorrowSchema = new Schema<IBorrow>({
+const BorrowSchema = new Schema<IBorrow>(
+    {
     book: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -18,4 +19,10 @@ const BorrowSchema = new Schema<IBorrow>({
         type: String,
         required: true
     }
-})
+}, {
+    versionKey: false,
+    timestamps: true,
+    toJSON: { virtuals: true},
+    toObject: {virtuals: true} 
+}
+)
