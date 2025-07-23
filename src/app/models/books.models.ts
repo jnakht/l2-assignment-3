@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { IAuthor, IBook } from "../interfaces/books.interface";
+import { IAuthor, IBook, IBookInstanceMethods } from "../interfaces/books.interface";
 import validator from 'validator'
 
 // const AuthorSchema = new Schema<IAuthor>({
@@ -15,7 +15,7 @@ import validator from 'validator'
 //     }
 // })
 
-const BookSchema = new Schema<IBook>(
+const BookSchema = new Schema<IBook, IBookInstanceMethods>(
     {
     title: {
         type: String,
@@ -65,7 +65,15 @@ const BookSchema = new Schema<IBook>(
 }
 )
 
-const Book = model('Book', BookSchema);
+
+BookSchema.static('checkBookAvailability', async function checkBookAvailability(bookId, borrowAmount) {
+    const book : any = await this.findById(bookId).select('copies').lean();
+    // console.log(book, "in the static method");
+    return book.copies >= borrowAmount;
+})
+
+
+const Book = model<IBook, IBookInstanceMethods> ('Book', BookSchema);
 
 export default Book;
 

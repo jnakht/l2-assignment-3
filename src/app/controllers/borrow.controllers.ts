@@ -2,6 +2,7 @@
 import express, { Request, Response } from "express";
 import Borrow from "../models/borrow.models";
 import z from 'zod'
+import Book from "../models/books.models";
 
 export const borrowsRoutes = express.Router();
 
@@ -14,13 +15,22 @@ const createBorrowZodSchema = z.object({
 borrowsRoutes.post('/', async (req: Request, res: Response) => {
     // const body = req.body;
     try {
-        const zodBody = await createBorrowZodSchema.parseAsync(req.body);
-        const borrow = await Borrow.create(zodBody);
-        res.status(200).json({
-            "success": true,
-            "message": "Book borrowed successfully",
-            "data": borrow
-        })
+        const bookIsAvailable = await Book.checkBookAvailability(req.body.book);
+        if (bookIsAvailable) {
+            const zodBody = await createBorrowZodSchema.parseAsync(req.body);
+            const borrow = await Borrow.create(zodBody);
+            res.status(200).json({
+                "success": true,
+                "message": "Book borrowed successfully",
+                "data": borrow
+            })
+        } else {
+            res.status(400).json({
+                "success": false,
+                "message": "Book Is Not Available",
+                "data": null
+            })
+        }
     } catch (error: any) {
         console.log(error);
         res.status(400).json({

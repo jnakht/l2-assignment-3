@@ -1,9 +1,9 @@
 
-import { model, Schema } from "mongoose";
-import { IBorrow } from "../interfaces/borrow.interface";
+import { Model, model, Schema } from "mongoose";
+import { IBorrow, IBorrowInstanceMethods } from "../interfaces/borrow.interface";
 
 
-const BorrowSchema = new Schema<IBorrow>(
+const BorrowSchema = new Schema<IBorrow, Model<IBorrow>, IBorrowInstanceMethods>(
     {
     book: {
         type: Schema.Types.ObjectId,
@@ -27,5 +27,12 @@ const BorrowSchema = new Schema<IBorrow>(
 }
 )
 
+
+// BorrowSchema.method('checkBookAvailability', async function checkBookAvailability(bookId) {
+
+// })
+
 const Borrow = model("Borrow", BorrowSchema);
+
+
 export default Borrow;

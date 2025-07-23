@@ -7,3 +7,7 @@ export interface IBorrow {
     quantity: number,
     dueDate: string,
 }
+
+// export interface IBorrowInstanceMethods {
+//     checkBookAvailability(bookId: string) : boolean;
+// }

@@ -1,3 +1,4 @@
+import { Model } from "mongoose";
 
 export interface IAuthor {
     firstName: string,
@@ -12,4 +13,8 @@ export interface IBook {
     description: string,
     copies: number,
     available: boolean,
+}
+
+export interface IBookInstanceMethods extends Model<IBook>{
+    checkBookAvailability(bookId: string) : boolean;
 }
