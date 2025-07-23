@@ -1,5 +1,5 @@
 
-import { Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
 
 
@@ -26,3 +26,6 @@ const BorrowSchema = new Schema<IBorrow>(
     toObject: {virtuals: true} 
 }
 )
+
+const Borrow = model("Borrow", BorrowSchema);
+export default Borrow;
