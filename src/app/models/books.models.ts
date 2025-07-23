@@ -2,26 +2,31 @@ import { model, Schema } from "mongoose";
 import { IAuthor, IBook } from "../interfaces/books.interface";
 
 
-const AuthorSchema = new Schema<IAuthor>({
-    firstName : { 
-        type : String,
-        required: [true, "First Name Is Required"],
-        trim : true,
-    },
-    lastName: {
-        type : String,
-        required: [true, "Last Name Is Required"],
-        trim: true,
-    }
-})
+// const AuthorSchema = new Schema<IAuthor>({
+//     firstName : { 
+//         type : String,
+//         required: [true, "First Name Is Required"],
+//         trim : true,
+//     },
+//     lastName: {
+//         type : String,
+//         required: [true, "Last Name Is Required"],
+//         trim: true,
+//     }
+// })
 
-const BookSchema = new Schema<IBook>({
+const BookSchema = new Schema<IBook>(
+    {
     title: {
         type: String,
         required: [true, "Title Of The Book Is Required"],
         trim: true
     },
-    author: AuthorSchema,
+    author: {
+        type : String,
+        required: [true, "Author Name Is Required"],
+        trim : true
+    },
     genre: {
         type: String,
         enum : ['FICTION', 'NON_FICTION', 'SCIENCE', 'HISTORY', 'BIOGRAPHY', 'FANTASY'],
@@ -46,7 +51,11 @@ const BookSchema = new Schema<IBook>({
         required: true,
         default: true,
     }
-})
+}, {
+    versionKey: false,
+    timestamps: true
+}
+)
 
 const Book = model('Book', BookSchema);
 
