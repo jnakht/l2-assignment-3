@@ -62,6 +62,16 @@ booksRoutes.get('/', async (req: Request, res: Response) => {
     })
 })
 
+booksRoutes.get('/:bookId', async (req : Request, res : Response) => {
+    const id = req.params.bookId;
+    const book = await Book.findById(id);
+    res.status(200).json({
+        "success": true,
+        "message": "Book retrieved successfully",
+        "data": book
+    })
+})
+
 
 
 
