@@ -16,5 +16,5 @@ export interface IBook {
 }
 
 export interface IBookInstanceMethods extends Model<IBook>{
-    checkBookAvailability(bookId: string) : boolean;
+    checkBookAvailability(bookId: string, borrowAmount: number) : boolean;
 }

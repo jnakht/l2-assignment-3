@@ -69,6 +69,8 @@ const BookSchema = new Schema<IBook, IBookInstanceMethods>(
 BookSchema.static('checkBookAvailability', async function checkBookAvailability(bookId, borrowAmount) {
     const book : any = await this.findById(bookId).select('copies').lean();
     // console.log(book, "in the static method");
+    // console.log(typeof book.copies);
+    // console.log(borrowAmount, "borrowamount");
     return book.copies >= borrowAmount;
 })
 

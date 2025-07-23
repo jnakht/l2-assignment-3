@@ -1,6 +1,7 @@
 
 import { Model, model, Schema } from "mongoose";
 import { IBorrow, IBorrowInstanceMethods } from "../interfaces/borrow.interface";
+import Book from "./books.models";
 
 
 const BorrowSchema = new Schema<IBorrow, Model<IBorrow>, IBorrowInstanceMethods>(
@@ -27,7 +28,14 @@ const BorrowSchema = new Schema<IBorrow, Model<IBorrow>, IBorrowInstanceMethods>
 }
 )
 
-
+BorrowSchema.post('save', async function(doc, next) {
+    if (doc) {
+        await Book.findByIdAndUpdate(doc.book, {
+            $inc: { copies: -doc.quantity}
+        })
+    }
+    next();
+})
 // BorrowSchema.method('checkBookAvailability', async function checkBookAvailability(bookId) {
 
 // })

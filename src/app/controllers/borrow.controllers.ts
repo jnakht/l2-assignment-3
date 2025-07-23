@@ -15,7 +15,8 @@ const createBorrowZodSchema = z.object({
 borrowsRoutes.post('/', async (req: Request, res: Response) => {
     // const body = req.body;
     try {
-        const bookIsAvailable = await Book.checkBookAvailability(req.body.book);
+        const bookIsAvailable = await Book.checkBookAvailability(req.body.book, req.body.quantity);
+        console.log("book is available", bookIsAvailable);
         if (bookIsAvailable) {
             const zodBody = await createBorrowZodSchema.parseAsync(req.body);
             const borrow = await Borrow.create(zodBody);
