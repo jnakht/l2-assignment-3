@@ -1,15 +1,14 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
-import { Error } from "mongoose";
+import mongoose, { Error } from "mongoose";
 
 
 
 export const errorHandler : ErrorRequestHandler = (err : any, req: Request, res : Response, next: NextFunction) => {
     console.log('❌ - Error Occurred - ❌', err);
-    console.log(err.cause.code, "error code");
-    console.log(err.name, "error name");
+
 
     //validation error
-    if (err instanceof Error.ValidationError) {
+    if (err instanceof mongoose.Error.ValidationError) {
         return res.status(400).json({
             message: "Validation Failed",
             success: false,
@@ -21,7 +20,7 @@ export const errorHandler : ErrorRequestHandler = (err : any, req: Request, res 
     }
 
     //cast error
-    if (err instanceof Error.CastError) {
+    if (err instanceof mongoose.Error.CastError) {
         return res.status(400).json({
             message: "Validation Failed",
             success: false,
@@ -46,7 +45,8 @@ export const errorHandler : ErrorRequestHandler = (err : any, req: Request, res 
     }
 
     //duplicate key error
-    if (err.name === 'MongooseError' && err.cause.code === 11000) {
+    console.log(err?.name , err?.cause?.code , err?.code);
+    if (err.name === 'MongooseError' && (err?.cause?.code === 11000 || err?.code === 1000)) {
         console.log(err);
         console.log("duplicate key function");
         res.status(400).json({
@@ -64,5 +64,30 @@ export const errorHandler : ErrorRequestHandler = (err : any, req: Request, res 
             }
         })
     }
-    next();
+
+    if(err instanceof mongoose?.Error) {
+        return res.status(400).json({
+            message: "Validation Failed",
+            success: false,
+            error: {
+                name: err.name,
+                errors: {
+                    message: err.message,
+                    name: err.name,  
+                }
+            }
+        })
+    }
+
+
+    return res.status(500).json({
+        message: "Internal Server Error",
+        success: false,
+        error: {
+            name: err.name || "Something Went Wrong",
+            message: err.message || "Internal Server Error",
+            errors: err
+        }
+    })
+
 }

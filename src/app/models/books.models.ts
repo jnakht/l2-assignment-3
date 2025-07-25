@@ -30,7 +30,7 @@ const BookSchema = new Schema<IBook, IBookInstanceMethods>(
     isbn: {
         type: String,
         required: [true, 'ISBN Is Required'],
-        unique: [true, "ISBN Must Be Unique For Each Book"]
+        unique: [true, "isbn must be unique"], 
     },
     description: {
         type : String,

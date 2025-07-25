@@ -4,10 +4,11 @@ import Book from "../models/books.models";
 export const booksRoutes = express.Router();
 
 //create a book route
-booksRoutes.post('/create-book', async (req: Request, res: Response, next: NextFunction) => {
+booksRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         
         const book = await Book.create(req.body);
+        
 
         res.status(200).json({
             success: true,
@@ -79,7 +80,7 @@ booksRoutes.get('/:bookId', async (req: Request, res: Response, next: NextFuncti
     }
 })
 // update a single book by id
-booksRoutes.patch('/:bookId', async (req: Request, res: Response, next: NextFunction) => {
+booksRoutes.put('/:bookId', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.bookId;
         const body = req.body;

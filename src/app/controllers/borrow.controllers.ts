@@ -16,21 +16,28 @@ const bookNotAvailableError = {
             name: "BookNotAvailableError",
             properties: {
                 message: "This Number Of Book Is Not Available",
+                type: "max"
             },
-            path: "quantity"
+            path: "quantity",
+            kind: "max",
         } 
     }
 }
 
 
 borrowsRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
-    // const body = req.body;
     try {
+        const borrow = await new Borrow(req.body);
+        await borrow.save();
         const bookIsAvailable = await Book.checkBookAvailability(req.body.book, req.body.quantity);
         console.log("book is available", bookIsAvailable);
+        res.status(200).json({
+                "success": true,
+                "message": "Book borrowed successfully",
+                "data": borrow
+            })
         if (bookIsAvailable) {
-            const body = req.body;
-            const borrow = await Borrow.create(body);
+            
             res.status(200).json({
                 "success": true,
                 "message": "Book borrowed successfully",

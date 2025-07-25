@@ -8,18 +8,18 @@ const BorrowSchema = new Schema<IBorrow, Model<IBorrow>>(
     {
     book: {
         type: Schema.Types.ObjectId,
-        required: true,
+        required: [true, "Book Is Required"],
         ref: "Book",
         trim: true
     },
     quantity: {
         type: Number,
-        required: true,
-        min: 1,
+        required: [true, "Quantity Is Required"],
+        min: [1, "The Borrow Quantity Must Be At Least One"],
     },
     dueDate: {
         type: String,
-        required: true
+        required: [true, "Due Date Is Required"]
     }
 }, {
     versionKey: false,
