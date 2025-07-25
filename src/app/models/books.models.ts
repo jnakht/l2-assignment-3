@@ -1,19 +1,6 @@
 import { model, Schema } from "mongoose";
-import { IAuthor, IBook, IBookInstanceMethods } from "../interfaces/books.interface";
+import { IBook, IBookInstanceMethods } from "../interfaces/books.interface";
 import validator from 'validator'
-
-// const AuthorSchema = new Schema<IAuthor>({
-//     firstName : { 
-//         type : String,
-//         required: [true, "First Name Is Required"],
-//         trim : true,
-//     },
-//     lastName: {
-//         type : String,
-//         required: [true, "Last Name Is Required"],
-//         trim: true,
-//     }
-// })
 
 const BookSchema = new Schema<IBook, IBookInstanceMethods>(
     {
@@ -26,13 +13,13 @@ const BookSchema = new Schema<IBook, IBookInstanceMethods>(
         type : String,
         required: [true, "Author Name Is Required"],
         trim : true,
+        maxlength: [100, 'Max 100 Characters Are Allowed For Author Names. Got {VALUE}'],
         validate: {
             validator: function(v) {
-                return validator.isAlpha(v);
+                return /^(?=.*[A-Za-z])[A-Za-z ]+$/.test(v);
             },
-            message: props => `Name Must Only Contain Alphabets. Got ${props.value}`
-        },
-        maxlength: [100, 'Max 100 Characters Are Allowed For Author Names. Got {VALUE}'] 
+            message: props => `Invalid Name Format, Allow Only Letters, Spaces; Must Contain At Least One Letter`
+        }
     },
     genre: {
         type: String,
@@ -68,9 +55,6 @@ const BookSchema = new Schema<IBook, IBookInstanceMethods>(
 
 BookSchema.static('checkBookAvailability', async function checkBookAvailability(bookId, borrowAmount) {
     const book : any = await this.findById(bookId).select('copies').lean();
-    // console.log(book, "in the static method");
-    // console.log(typeof book.copies);
-    // console.log(borrowAmount, "borrowamount");
     return book.copies >= borrowAmount;
 })
 

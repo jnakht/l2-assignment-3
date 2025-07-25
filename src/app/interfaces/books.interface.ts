@@ -1,10 +1,5 @@
 import { Model } from "mongoose";
 
-export interface IAuthor {
-    firstName: string,
-    lastName: string,
-}
-
 export interface IBook {
     title: string,
     author: string,

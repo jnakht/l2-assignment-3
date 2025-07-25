@@ -1,15 +1,22 @@
 
 import { Model, model, Schema } from "mongoose";
-import { IBorrow, IBorrowInstanceMethods } from "../interfaces/borrow.interface";
+import { IBorrow } from "../interfaces/borrow.interface";
 import Book from "./books.models";
+import { isMongoId } from "validator";
 
 
-const BorrowSchema = new Schema<IBorrow, Model<IBorrow>, IBorrowInstanceMethods>(
+const BorrowSchema = new Schema<IBorrow, Model<IBorrow>>(
     {
     book: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "Book",
+        validate: {
+            validator: function(v) {
+                return isMongoId(v);
+            },
+            message: props => `${props.value} Is Not A Valid MongoDB ObjectId`
+        },
         trim: true
     },
     quantity: {
@@ -45,11 +52,7 @@ BorrowSchema.post('save', async function(doc, next) {
     }
     next();
 })
-// BorrowSchema.method('checkBookAvailability', async function checkBookAvailability(bookId) {
-
-// })
 
 const Borrow = model("Borrow", BorrowSchema);
-
 
 export default Borrow;
