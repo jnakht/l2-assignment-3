@@ -2,7 +2,6 @@
 import { Model, model, Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
 import Book from "./books.models";
-import { isMongoId } from "validator";
 
 
 const BorrowSchema = new Schema<IBorrow, Model<IBorrow>>(
@@ -11,12 +10,6 @@ const BorrowSchema = new Schema<IBorrow, Model<IBorrow>>(
         type: Schema.Types.ObjectId,
         required: true,
         ref: "Book",
-        validate: {
-            validator: function(v) {
-                return isMongoId(v);
-            },
-            message: props => `${props.value} Is Not A Valid MongoDB ObjectId`
-        },
         trim: true
     },
     quantity: {

@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 export interface IBook {
     title: string,
@@ -11,5 +11,5 @@ export interface IBook {
 }
 
 export interface IBookInstanceMethods extends Model<IBook>{
-    checkBookAvailability(bookId: string, borrowAmount: number) : boolean;
+    checkBookAvailability(bookId: Types.ObjectId, borrowAmount: number) : boolean;
 }

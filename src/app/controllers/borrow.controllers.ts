@@ -1,25 +1,36 @@
 
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import Borrow from "../models/borrow.models";
 import z from 'zod'
 import Book from "../models/books.models";
 
 export const borrowsRoutes = express.Router();
 
-const createBorrowZodSchema = z.object({
-    book: z.string("Not A Valid ObjectId Of Mongodb").regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId Format"),
-    quantity: z.number("Quantity Must Be A Number").gt(0, "Quantity Must Be At Least 1"),
-    dueDate: z.iso.datetime("This Is Not A Valid Date")
-})
 
-borrowsRoutes.post('/', async (req: Request, res: Response) => {
+
+const bookNotAvailableError = {
+    name : "BookNotAvailableError",
+    errors: {
+        quantity: {
+            message: "This Number Of Book Is Not Available",
+            name: "BookNotAvailableError",
+            properties: {
+                message: "This Number Of Book Is Not Available",
+            },
+            path: "quantity"
+        } 
+    }
+}
+
+
+borrowsRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     // const body = req.body;
     try {
         const bookIsAvailable = await Book.checkBookAvailability(req.body.book, req.body.quantity);
         console.log("book is available", bookIsAvailable);
         if (bookIsAvailable) {
-            const zodBody = await createBorrowZodSchema.parseAsync(req.body);
-            const borrow = await Borrow.create(zodBody);
+            const body = req.body;
+            const borrow = await Borrow.create(body);
             res.status(200).json({
                 "success": true,
                 "message": "Book borrowed successfully",
@@ -27,24 +38,25 @@ borrowsRoutes.post('/', async (req: Request, res: Response) => {
             })
         } else {
             res.status(400).json({
-                "success": false,
                 "message": "Book Is Not Available",
-                "data": null
+                "success" : false,
+                "error": bookNotAvailableError
             })
         }
     } catch (error: any) {
-        console.log(error);
-        res.status(400).json({
-            "message": error._message,
-            "success": false,
-            "error": error
-        })
+        // console.log(error);
+        // res.status(400).json({
+        //     "message": error.message,
+        //     "success": false,
+        //     "error": error
+        // })
+        next(error);
     }
 })
 
 
 // get borrow summary
-borrowsRoutes.get('/', async (req: Request, res: Response) => {
+borrowsRoutes.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         //aggregate pipeline
         const borrows = await Borrow.aggregate([
@@ -80,11 +92,12 @@ borrowsRoutes.get('/', async (req: Request, res: Response) => {
             "data": borrows
         })
     } catch (error: any) {
-        console.log(error);
-        res.status(400).json({
-            "message": error._message,
-            "success": false,
-            "error": error
-        })
+        // console.log(error);
+        // res.status(400).json({
+        //     "message": error.message,
+        //     "success": false,
+        //     "error": error
+        // })
+        next();
     }
 })
