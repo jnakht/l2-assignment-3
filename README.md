@@ -110,6 +110,30 @@ A full-featured Library Management API built with **Express.js**, **Typescript**
 - Also, if borrow book leads to a book number to zero( i.e copies = 0), the available status on books collection of that book will be set to false. 
 
 
+---
+
+
+## ⚙️ Setup Instructions
+
+1. **Clone the repo**
+    ```ts
+    git clone https://github.com/jnakht/l2-assignment-3.git
+    cd [the folder name where you cloned this repo]
+
+2. **Install Dependencies**
+    ```ts
+    npm install
+
+3. **Setup .env file**
+    Create a .env file in the root directory:
+
+    ```ts
+    MONGO_URI=your_mongo_connection_string
+
+4. **Run Locally**
+
+    ```ts
+    npm start
 
 
 
