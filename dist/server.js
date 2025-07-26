@@ -14,13 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
+const books_models_1 = __importDefault(require("./app/models/books.models"));
 let server;
 const PORT = 5000;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield mongoose_1.default.connect('mongodb+srv://libraryuser:libraryuser@cluster0.gtqywnt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+            yield mongoose_1.default.connect('mongodb+srv://libraryuser:libraryuser@cluster0.gtqywnt.mongodb.net/libraryDB?retryWrites=true&w=majority&appName=Cluster0');
             console.log('Connected To Mongodb');
+            yield books_models_1.default.syncIndexes(); // Will recreate missing indexes based on your schema
             server = app_1.default.listen(PORT, () => {
                 console.log(`App is running on port : ${PORT}`);
             });
