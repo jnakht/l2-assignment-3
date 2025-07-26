@@ -7,7 +7,10 @@ A full-featured Library Management API built with **Express.js**, **Typescript**
 ## 🔗 Live Links
 
 -**Live API**: [l2-assignment-3-library-management.vercel.app](https://l2-assignment-3-library-management.vercel.app/)
--**Original Requirements**: [Appollo-Level2-Web-Dev](https://github.com/Apollo-Level2-Web-Dev/B5A3.git), you can check the original requirements for better understanding.
+
+-**Original Requirements**: [Appollo-Level2-Web-Dev](https://github.com/Apollo-Level2-Web-Dev/B5A3.git) 
+
+ you can check the original requirements for better understanding.
 
 
 ## 🚀 Features
@@ -131,7 +134,7 @@ A full-featured Library Management API built with **Express.js**, **Typescript**
 
     ```bash
     git clone https://github.com/jnakht/l2-assignment-3.git
-    cd [the folder name where you cloned this repo]
+    cd l2-assignment-3
     ```
 
 2. **Install Dependencies**
@@ -154,6 +157,14 @@ A full-featured Library Management API built with **Express.js**, **Typescript**
     npm start
     ```
 
+## 🧪 Testing the API
+
+You can test the endpoints using:
+- **Postman**
+- **Thunder Client** (extension)
+- Or any HTTP client of your choice
+
+> Example base URL: `https://l2-assignment-3-library-management.vercel.app/api/books`
 
 
 
