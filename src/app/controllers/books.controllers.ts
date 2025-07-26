@@ -3,12 +3,30 @@ import Book from "../models/books.models";
 
 export const booksRoutes = express.Router();
 
+
+const bookNotFound = {
+        name : "BookNotFoundError",
+        errors: {
+            objectId: {
+                message: "This Book Is Not Found",
+                name: "BookNotFoundError",
+                properties: {
+                message: "This Book Is Not Found",
+                type: "not found"
+                },
+                path: "bookId",
+                kind: "not found",
+            }
+    }    
+}
+
+
 //create a book route
 booksRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         await Book.syncIndexes();
         const book = await Book.create(req.body);
-    
+        
         res.status(200).json({
             success: true,
             message: "Book created successfully",
@@ -50,6 +68,13 @@ booksRoutes.get('/:bookId', async (req: Request, res: Response, next: NextFuncti
     try {
         const id = req.params.bookId;
         const book = await Book.findById(id);
+        if (!book) {
+            return res.status(400).json({
+                message : "Book Not Found",
+                success: false,
+                error: bookNotFound
+            })
+        }
         res.status(200).json({
             "success": true,
             "message": "Book retrieved successfully",
@@ -65,6 +90,13 @@ booksRoutes.put('/:bookId', async (req: Request, res: Response, next: NextFuncti
         const id = req.params.bookId;
         const body = req.body;
         const updatedBook = await Book.findByIdAndUpdate(id, body, { new: true });
+        if (!updatedBook) {
+            return res.status(400).json({
+                message : "Book Not Found",
+                success: false,
+                error: bookNotFound
+            })
+        }
         res.status(200).json({
             "success": true,
             "message": "Book updated successfully",
@@ -80,6 +112,13 @@ booksRoutes.delete('/:bookId', async (req: Request, res: Response, next: NextFun
     try {
         const id = req.params.bookId;
         const deletedBook = await Book.findByIdAndDelete(id);
+        if (!deletedBook) {
+            return res.status(400).json({
+                message : "Book Not Found",
+                success: false,
+                error: bookNotFound
+            })
+        }
         res.status(200).json({
             "success": true,
             "message": "Book deleted successfully",

@@ -45,10 +45,7 @@ export const errorHandler : ErrorRequestHandler = (err : any, req: Request, res 
     }
 
     //duplicate key error
-    console.log(err?.name , err?.cause?.code , err?.code);
     if (err.name === 'MongooseError' && (err?.cause?.code === 11000 || err?.code === 1000)) {
-        console.log(err);
-        console.log("duplicate key function");
         res.status(400).json({
             message: "Validation Error",
             success: false,

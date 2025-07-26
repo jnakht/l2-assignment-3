@@ -54,7 +54,7 @@ const BookSchema = new Schema<IBook, IBookInstanceMethods>(
 
 BookSchema.static('checkBookAvailability', async function checkBookAvailability(bookId : mongoose.Types.ObjectId, borrowAmount : number) {
     const book : any = await this.findById(bookId).select('copies').lean();
-    return book.copies >= borrowAmount;
+    return book?.copies >= borrowAmount;
 })
 
 const Book = model<IBook, IBookInstanceMethods> ('Book', BookSchema);

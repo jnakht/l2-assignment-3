@@ -10,10 +10,10 @@ const bookNotAvailableError = {
     name: "BookNotAvailableError",
     errors: {
         quantity: {
-            message: "This Number Of Book Is Not Available",
+            message: "Book Is Not Available",
             name: "BookNotAvailableError",
             properties: {
-                message: "This Number Of Book Is Not Available",
+                message: "Book Is Not Available",
                 type: "max"
             },
             path: "quantity",
@@ -21,6 +21,24 @@ const bookNotAvailableError = {
         }
     }
 }
+
+
+const bookNotExists = {
+    name: "BookNotExistsError",
+    errors: {
+        book: {
+            message: "Book Does Not Exists",
+            name: "BookNotExistsError",
+            properties: {
+                message: "Book Does Not Exists",
+                type: "not exists"
+            },
+            path: "book",
+            kind: "not exists",
+        }
+    }
+}
+
 
 borrowsRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -31,12 +49,22 @@ borrowsRoutes.post('/', async (req: Request, res: Response, next: NextFunction) 
             return;
         }
 
+        //check if that referenced book exists
+        const bookExists = await Book.countDocuments({_id : req.body.book}, {limit : 1});
+        if (!bookExists) {
+            return res.status(400).json({
+                "message": "Book Does Not Exists",
+                "success": false,
+                "error": bookNotExists
+            })
+        }
+
         const bookIsAvailable = await Book.checkBookAvailability(req.body.book, req.body.quantity);
         if (bookIsAvailable) {
             borrow = await new Borrow(req.body);
             await borrow.save();
 
-            res.status(200).json({
+            return res.status(200).json({
                 "success": true,
                 "message": "Book borrowed successfully",
                 "data": borrow

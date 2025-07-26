@@ -26,7 +26,11 @@ app.use((req : Request, res : Response, next : NextFunction) => {
                     "name" : "Invalid Route",
                     "properties" : {
                         "message" : "The Route Is Not A Valid Route",
-                    }
+                        "code": 404,
+                        "type": "not found"
+                    },
+                    "kind": "not found",
+                    "path": req.path
                 }
             }
         }
