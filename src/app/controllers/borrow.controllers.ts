@@ -6,10 +6,8 @@ import Book from "../models/books.models";
 
 export const borrowsRoutes = express.Router();
 
-
-
 const bookNotAvailableError = {
-    name : "BookNotAvailableError",
+    name: "BookNotAvailableError",
     errors: {
         quantity: {
             message: "This Number Of Book Is Not Available",
@@ -20,24 +18,24 @@ const bookNotAvailableError = {
             },
             path: "quantity",
             kind: "max",
-        } 
+        }
     }
 }
 
-
 borrowsRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const borrow = await new Borrow(req.body);
-        await borrow.save();
+        let borrow: any;
+        if (!req.body.book || !req.body.quantity || !req.body.dueDate) {
+            borrow = await new Borrow(req.body);
+            await borrow.save();
+            return;
+        }
+
         const bookIsAvailable = await Book.checkBookAvailability(req.body.book, req.body.quantity);
-        console.log("book is available", bookIsAvailable);
-        res.status(200).json({
-                "success": true,
-                "message": "Book borrowed successfully",
-                "data": borrow
-            })
         if (bookIsAvailable) {
-            
+            borrow = await new Borrow(req.body);
+            await borrow.save();
+
             res.status(200).json({
                 "success": true,
                 "message": "Book borrowed successfully",
@@ -46,21 +44,14 @@ borrowsRoutes.post('/', async (req: Request, res: Response, next: NextFunction) 
         } else {
             res.status(400).json({
                 "message": "Book Is Not Available",
-                "success" : false,
+                "success": false,
                 "error": bookNotAvailableError
             })
         }
     } catch (error: any) {
-        // console.log(error);
-        // res.status(400).json({
-        //     "message": error.message,
-        //     "success": false,
-        //     "error": error
-        // })
         next(error);
     }
 })
-
 
 // get borrow summary
 borrowsRoutes.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -78,7 +69,7 @@ borrowsRoutes.get('/', async (req: Request, res: Response, next: NextFunction) =
             {
                 $group: {
                     _id: "$bookData",
-                    totalQuantity: { $sum: 1 }
+                    totalQuantity: { $sum: "$quantity" }
                 }
             },
             {
@@ -91,6 +82,7 @@ borrowsRoutes.get('/', async (req: Request, res: Response, next: NextFunction) =
                     totalQuantity: 1
                 }
             }
+
         ])
 
         res.status(200).json({
@@ -99,12 +91,6 @@ borrowsRoutes.get('/', async (req: Request, res: Response, next: NextFunction) =
             "data": borrows
         })
     } catch (error: any) {
-        // console.log(error);
-        // res.status(400).json({
-        //     "message": error.message,
-        //     "success": false,
-        //     "error": error
-        // })
         next();
     }
 })

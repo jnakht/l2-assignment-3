@@ -3,7 +3,6 @@ import { Model, model, Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
 import Book from "./books.models";
 
-
 const BorrowSchema = new Schema<IBorrow, Model<IBorrow>>(
     {
     book: {

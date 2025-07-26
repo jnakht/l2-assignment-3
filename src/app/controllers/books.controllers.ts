@@ -6,22 +6,15 @@ export const booksRoutes = express.Router();
 //create a book route
 booksRoutes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        
+        await Book.syncIndexes();
         const book = await Book.create(req.body);
-        
-
+    
         res.status(200).json({
             success: true,
             message: "Book created successfully",
             data: book,
         });
     } catch (error) {
-            // console.log(error);
-            // res.status(400).json({
-            //     message: "Validation Failed",
-            //     success: false,
-            //     error,
-            // });
             next(error)
     }
 });
@@ -43,19 +36,12 @@ booksRoutes.get('/', async (req: Request, res: Response, next: NextFunction) => 
                 { [sortBy]: sortOrder } : {}
         ).limit(limit ? parseInt(limit) : 0);
 
-
         res.status(200).json({
             "success": true,
             "message": "Books retrieved successfully",
             "data": books
         })
     } catch (error: any) {
-        // console.log(error);
-        // res.status(400).json({
-        //     "message": error._message,
-        //     "success": false,
-        //     "error": error
-        // })
         next(error);
     }
 })
@@ -70,12 +56,6 @@ booksRoutes.get('/:bookId', async (req: Request, res: Response, next: NextFuncti
             "data": book
         })
     } catch (error: any) {
-        // console.log(error);
-        // res.status(400).json({
-        //     "message": error._message,
-        //     "success": false,
-        //     "error": error
-        // })
         next(error);
     }
 })
@@ -91,12 +71,6 @@ booksRoutes.put('/:bookId', async (req: Request, res: Response, next: NextFuncti
             "data": updatedBook
         });
     } catch (error: any) {
-        // console.log(error);
-        // res.status(400).json({
-        //     "message": error._message,
-        //     "success": false,
-        //     "error": error
-        // })
         next(error);
     }
 })
@@ -112,13 +86,6 @@ booksRoutes.delete('/:bookId', async (req: Request, res: Response, next: NextFun
             "data": null
         });
     } catch (error: any) {
-        // console.log(error);
-        // res.status(400).json({
-        //     "message": error._message,
-        //     "success": false,
-        //     "error": error
-        // })
         next(error);
     }
 })
-

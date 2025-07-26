@@ -8,7 +8,6 @@ import Book from './app/models/books.models';
 let server : Server;
 const PORT = 5000;
 
-
 async function main() {
     try {
         await mongoose.connect('mongodb+srv://libraryuser:libraryuser@cluster0.gtqywnt.mongodb.net/libraryDB?retryWrites=true&w=majority&appName=Cluster0');
@@ -24,4 +23,3 @@ async function main() {
     }
 }
 main();
-

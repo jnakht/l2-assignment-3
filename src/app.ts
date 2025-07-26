@@ -4,7 +4,6 @@ import { borrowsRoutes } from "./app/controllers/borrow.controllers";
 import { errorHandler } from "./error.hanlder.middleware";
 
 
-
 const app: Application = express();
 app.use(express.json());
 app.use('/api/books', booksRoutes);
@@ -14,7 +13,6 @@ app.get('/', (req : Request, res : Response, next: NextFunction) => {
     res.send('Welcome to Library Application');
     next();
 })
-
 
 app.use((req : Request, res : Response, next : NextFunction) => {
     res.status(404).json({
@@ -35,17 +33,6 @@ app.use((req : Request, res : Response, next : NextFunction) => {
     })
     next();
 })
-
-// app.use((error : any, req : Request, res : Response, next : NextFunction) => {
-//     if (error) {
-//         // console.log(error);
-//         // res.status(400).json({
-//         //     "message": error.message,
-//         //     "success": false,
-//         //     "error": error
-//         // })
-//     }
-// })
 
 app.use(errorHandler);
 
