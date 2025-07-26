@@ -150,7 +150,9 @@ A full-featured Library Management API built with **Express.js**, **Typescript**
     ```env
     MONGO_URI=your_mongo_connection_string
     ```
-
+    
+    now, replace 'the your_mongo_connection_string' with your actual MongoDB connection string 
+    
 4. **Run Locally**
 
     ```bash
