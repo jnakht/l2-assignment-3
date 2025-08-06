@@ -2,16 +2,32 @@ import express, { Application, NextFunction, Request, Response } from "express"
 import { booksRoutes } from "./app/controllers/books.controllers";
 import { borrowsRoutes } from "./app/controllers/borrow.controllers";
 import { errorHandler } from "./error.hanlder.middleware";
-import cors from 'cors'
+import cors from "cors";
 
 
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-frontend.vercel.app", // ⛳️ Replace with deployed frontend URL
+];
 const app: Application = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'live-deploy-url']
-   })
+    origin: function (origin, callback) {
+      // allow requests with no origin (like curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
 );
+// ✅ Preflight support
+app.options("*", cors());
+
 app.use('/api/books', booksRoutes);
 app.use('/api/borrow', borrowsRoutes);
 
@@ -41,7 +57,7 @@ app.use((req : Request, res : Response, next : NextFunction) => {
             }
         }
     })
-    next();
+    // next();
 })
 
 app.use(errorHandler);

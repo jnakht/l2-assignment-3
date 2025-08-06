@@ -42,7 +42,7 @@ BorrowSchema.post('save', async function(doc, next) {
             });
         }
     }
-    next();
+    // next();
 })
 
 const Borrow = model("Borrow", BorrowSchema);
