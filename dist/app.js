@@ -7,7 +7,14 @@ const express_1 = __importDefault(require("express"));
 const books_controllers_1 = require("./app/controllers/books.controllers");
 const borrow_controllers_1 = require("./app/controllers/borrow.controllers");
 const error_hanlder_middleware_1 = require("./error.hanlder.middleware");
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "*",
+    // methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+}));
 app.use(express_1.default.json());
 app.use('/api/books', books_controllers_1.booksRoutes);
 app.use('/api/borrow', borrow_controllers_1.borrowsRoutes);
@@ -36,7 +43,7 @@ app.use((req, res, next) => {
             }
         }
     });
-    next();
+    // next();
 });
 app.use(error_hanlder_middleware_1.errorHandler);
 exports.default = app;

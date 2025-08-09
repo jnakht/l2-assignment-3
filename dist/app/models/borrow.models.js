@@ -52,7 +52,7 @@ BorrowSchema.post('save', function (doc, next) {
                 });
             }
         }
-        next();
+        // next();
     });
 });
 const Borrow = (0, mongoose_1.model)("Borrow", BorrowSchema);

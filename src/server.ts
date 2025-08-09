@@ -8,7 +8,8 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 let server : Server;
-const PORT = 5000;
+const PORT = 8080;
+// const PORT = 5000;
 
 async function main() {
     try {
