@@ -87,42 +87,99 @@ exports.borrowsRoutes.post('/', (req, res, next) => __awaiter(void 0, void 0, vo
     }
 }));
 // get borrow summary
+// borrowsRoutes.get('/', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         //aggregate pipeline
+//         const borrows = await Borrow.aggregate([
+//             {
+//                 $lookup: {
+//                     from: "books",
+//                     localField: "book",
+//                     foreignField: "_id",
+//                     as: "bookData"
+//                 }
+//             },
+//             {
+//                 $group: {
+//                     _id: "$bookData",
+//                     totalQuantity: { $sum: "$quantity" }
+//                 }
+//             },
+//             {
+//                 $project: {
+//                     _id: 0,
+//                     book: {
+//                         title: { $first: "$_id.title" },
+//                         isbn: { $first: "$_id.isbn" }
+//                     },
+//                     totalQuantity: 1
+//                 }
+//             }
+//         ])
+//         res.status(200).json({
+//             "success": true,
+//             "message": "Borrowed books summary retrieved successfully",
+//             "data": borrows
+//         })
+//     } catch (error: any) {
+//         next();
+//     }
+// })
+// get borrow summary with pagination
 exports.borrowsRoutes.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
         //aggregate pipeline
-        const borrows = yield borrow_models_1.default.aggregate([
+        const borrowAgg = yield borrow_models_1.default.aggregate([
+            {
+                $group: {
+                    _id: "$book",
+                    totalQuantity: { $sum: "$quantity" }
+                }
+            },
             {
                 $lookup: {
-                    from: "books",
-                    localField: "book",
+                    from: 'books',
+                    localField: "_id",
                     foreignField: "_id",
                     as: "bookData"
                 }
             },
             {
-                $group: {
-                    _id: "$bookData",
-                    totalQuantity: { $sum: "$quantity" }
-                }
+                $unwind: "$bookData"
             },
             {
                 $project: {
                     _id: 0,
                     book: {
-                        title: { $first: "$_id.title" },
-                        isbn: { $first: "$_id.isbn" }
+                        title: "$bookData.title",
+                        isbn: "$bookData.isbn"
                     },
                     totalQuantity: 1
                 }
-            }
+            },
+            // Pagination
+            { $skip: skip },
+            { $limit: limit }
         ]);
+        const borrows = yield borrowAgg;
+        const totalAgg = yield borrow_models_1.default.aggregate([
+            { $group: { _id: "$book" } },
+            { $count: "total" }
+        ]);
+        const total = totalAgg.length > 0 ? totalAgg[0].total : 0;
         res.status(200).json({
             "success": true,
             "message": "Borrowed books summary retrieved successfully",
-            "data": borrows
+            "data": borrows,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
         });
     }
     catch (error) {
-        next();
+        next(error);
     }
 }));

@@ -23,9 +23,9 @@ const BookSchema = new mongoose_1.Schema({
         maxlength: [100, 'Max 100 Characters Are Allowed For Author Names. Got {VALUE}'],
         validate: {
             validator: function (v) {
-                return /^(?=.*[A-Za-z])[A-Za-z ]+$/.test(v);
+                return /^(?=.*[A-Za-z])[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/.test(v);
             },
-            message: props => `Invalid Name Format, Allow Only Letters, Spaces; Must Contain At Least One Letter`
+            message: props => `Invalid Name Format, Allow Only Letters, Accented letters, Apostrophes ', Hyphens -, Spaces; Must Contain At Least One Letter`
         }
     },
     genre: {
