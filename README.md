@@ -6,6 +6,9 @@ A full-featured Library Management API built with **Express.js**, **Typescript**
 
 ## 🔗 Live Links
 
+### Some features have been changed and modified, and now used in a frontend application, for more details : **: [jnakht-library-management-frontend.vercel.app](https://github.com/jnakht/library-management-frontend.git/)
+
+
 -**Live API**: [l2-assignment-3-library-management.vercel.app](https://l2-assignment-3-library-management.vercel.app/)
 
 -**Original Requirements**: [Appollo-Level2-Web-Dev](https://github.com/Apollo-Level2-Web-Dev/B5A3.git) 
