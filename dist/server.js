@@ -18,8 +18,8 @@ const books_models_1 = __importDefault(require("./app/models/books.models"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 let server;
-const PORT = 8080;
-// const PORT = 5000;
+// const PORT = 8080;
+const PORT = process.env.PORT || 5000;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

@@ -10,10 +10,15 @@ const error_hanlder_middleware_1 = require("./error.hanlder.middleware");
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
+// app.use(
+//   cors({
+//     origin: "*",
+//     // methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
 app.use((0, cors_1.default)({
-    origin: "*",
-    // methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    origin: ['http://localhost:5173', 'https://library-management-frontend-omega-ten.vercel.app']
 }));
 app.use(express_1.default.json());
 app.use('/api/books', books_controllers_1.booksRoutes);
